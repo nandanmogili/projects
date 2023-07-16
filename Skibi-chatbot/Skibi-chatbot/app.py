@@ -1,0 +1,68 @@
+from flask import Flask, render_template, request
+import openai
+import pandas as pd
+import tiktoken
+from openai.embeddings_utils import get_embedding, cosine_similarity
+import numpy as np
+
+
+
+app = Flask(__name__)
+
+# Set up OpenAI API credentials
+openai.api_key = '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'
+
+
+# Define the default route to return the index.html file
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+# Define the /api route to handle POST requests
+@app.route("/api", methods=["POST"])
+def api():
+    # Get the message from the POST request
+    message = request.json.get("message")
+    # Send the message to OpenAI's API and receive the response
+    
+    
+    completion = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "user", "content": message}
+    ]
+    )
+    if completion.choices[0].message!=None:
+        return completion.choices[0].message
+
+    else :
+        return 'Failed to Generate response!'
+
+
+# Get embeddings for each question in csv
+def run_embedding_model():
+    embedding_model = "text-embedding-ada-002"
+    df = pd.read_csv("test.csv") # csv reader
+
+    df["embedding"] = df.Question.apply(lambda x: get_embedding(x, engine=embedding_model)) # runs each question in the CSV through embedding model 
+    df.to_csv("testWithEmbeddings.csv") # writes results to a new csv file. This csv file now includes each question's embedding
+
+
+# Compare user's question to question embeddings
+def search(df, userQuestion, n=3):
+   embedding = get_embedding(userQuestion, 'text-embedding-ada-002') # gets embedding for user question
+   df['similarities'] = df.embedding.apply(lambda x: cosine_similarity(x, embedding)) # creates a new csv entry with a similarity score
+   res = df.sort_values('similarities', ascending=False).head(n)
+   return res # returns the n most similar results to user question
+
+
+    
+
+if __name__=='__main__':
+    df = pd.read_csv("testWithEmbeddings.csv")
+    df["embedding"] = df.embedding.apply(eval).apply(np.array)
+    print(search(df, "What are some harmful cybersecurity methods?", n=3))
+    
+    app.run()
+    
+
