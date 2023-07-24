@@ -1,0 +1,12 @@
+flask
+openai
+tiktoken
+pandas 
+openai
+transformers
+plotly
+matplotlib
+scikit-learn
+torch
+torchvision
+scipy
