@@ -68,11 +68,13 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         padding: 10px;
+        flex-grow: 1; /* Added to make the textarea take all available space */
       }
 
       .send-btn {
-        margin-top: 10px;
-        width: 100%;
+        margin-left: 10px;
+        min-width: 80px; /* Adjust this value as needed */
+        flex-shrink: 0;
       }
     </style>
   </head>
@@ -83,17 +85,17 @@
       <div class="chat-box mt-3" id="chat-box">
         <!-- Chat messages will be added here dynamically -->
       </div>
-      <div class="form-group mt-3">
+      <div class="form-group mt-3 d-flex">
         <textarea
-          class="form-control"
+          class="form-control flex-grow-1"
           rows="3"
           placeholder="Type your message here"
           id="message-input"
         ></textarea>
+        <button type="button" class="btn btn-primary send-btn" id="send-btn">
+          Send
+        </button>
       </div>
-      <button type="button" class="btn btn-primary send-btn" id="send-btn">
-        Send
-      </button>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
