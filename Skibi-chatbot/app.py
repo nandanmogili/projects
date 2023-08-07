@@ -10,7 +10,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Set up OpenAI API credentials
-openai.api_key = ''
+openai.api_key = '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'
 
 
 # Define the default route to return the index.html file
